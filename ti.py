@@ -1,10 +1,20 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import csv
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
+from sklearn.metrics import roc_curve, auc
+from sklearn.model_selection import StratifiedKFold
+
+import string
+import warnings
 def concat_df(train_data, test_data):
 # Returns a concatenated df of training and test set
  return pd.concat([train_data, test_data], sort=True).reset_index(drop=True)
 def drop_features(df):
- return df.drop(['Ticket', 'Name', 'Embarked','Cabin'], axis=1)
+ return df.drop([ 'Name', 'Embarked','Cabin'], axis=1)
 def divide_df(all_data):
     # Returns divided dfs of training and test set
     return all_data.loc[:890], all_data.loc[891:].drop(['Survived'], axis=1)
@@ -12,6 +22,22 @@ def display_missing(df):
     for col in df.columns.tolist():          
         print('{} column missing values: {}'.format(col, df[col].isnull().sum()))
     print('\n')
+
+# Code adapted from https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
+def simplify_ages(df):
+    
+    bins = (-1, 0, 5, 12, 18, 25, 35, 60, 120)
+    group_names = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
+    categories = pd.cut(df.Age, bins, labels=group_names)
+    df.Age = categories
+    return df
+def simplify_fares(df):
+   
+    bins = (-1, 0, 8, 15, 31, 1000)
+    group_names = ['Unknown', '1_quartile', '2_quartile', '3_quartile', '4_quartile']
+    categories = pd.cut(df.Fare, bins, labels=group_names)
+    df.Fare = categories
+    return df
 df_train = pd.read_csv('train.csv')
 df_test = pd.read_csv('test.csv')
 df_all = concat_df(df_train, df_test)
@@ -34,14 +60,34 @@ df_all.loc[idx, 'Deck'] = 'A'
 df_all['Deck'] = df_all['Deck'].replace(['A', 'B', 'C'], 'ABC')
 df_all['Deck'] = df_all['Deck'].replace(['D', 'E'], 'DE')
 df_all['Deck'] = df_all['Deck'].replace(['F', 'G'], 'FG')
+#############################################################new features based on relationship
+df_all['Family_Size'] = df_all['SibSp'] + df_all['Parch'] + 1
+df_all=simplify_ages(df_all)
+df_all=simplify_fares(df_all)
+df_all['Ticket_Frequency'] = df_all.groupby('Ticket')['Ticket'].transform('count')
+df_all['Title'] = df_all['Name'].str.split(', ', expand=True)[1].str.split('.', expand=True)[0]
+df_all['Is_Married'] = 0
+df_all['Is_Married'].loc[df_all['Title'] == 'Mrs'] = 1
+# group them
+df_all['Title'] = df_all['Title'].replace(['Miss', 'Mrs','Ms', 'Mlle', 'Lady', 'Mme', 'the Countess', 'Dona'], 'Miss/Mrs/Ms')
+df_all['Title'] = df_all['Title'].replace(['Dr', 'Col', 'Major', 'Jonkheer', 'Capt', 'Sir', 'Don', 'Rev'], 'Dr/Military/Noble/Clergy')
+
+#drop
 df_all=drop_features(df_all)
 
-df_train, df_test = divide_df(df_all)
+df_train = df_all.loc[:890]
+df_test = df_all.loc[891:]
 dfs = [df_train, df_test]
+#label encode
+non_numeric_features = [ 'Age', 'Fare']
 
+for df in dfs:
+    for feature in non_numeric_features:        
+        df[feature] = LabelEncoder().fit_transform(df[feature])
 #for df in dfs:
     #display_missing(df)
 #df_all['Deck'].value_counts()
+df_all = concat_df(df_train, df_test)
 print(df_all.head())
 print(df_all['Deck'].value_counts())
-#df_all.to_csv(r'data.csv')
+df_all.to_csv('data.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
