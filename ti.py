@@ -66,8 +66,8 @@ df_all=simplify_ages(df_all)
 df_all=simplify_fares(df_all)
 df_all['Ticket_Frequency'] = df_all.groupby('Ticket')['Ticket'].transform('count')
 df_all['Title'] = df_all['Name'].str.split(', ', expand=True)[1].str.split('.', expand=True)[0]
-df_all['Is_Married'] = 0
-df_all['Is_Married'].loc[df_all['Title'] == 'Mrs'] = 1
+#df_all['Is_Married'] = 0
+#df_all['Is_Married'].loc[df_all['Title'] == 'Mrs'] = 1
 # group them
 df_all['Title'] = df_all['Title'].replace(['Miss', 'Mrs','Ms', 'Mlle', 'Lady', 'Mme', 'the Countess', 'Dona'], 'Miss/Mrs/Ms')
 df_all['Title'] = df_all['Title'].replace(['Dr', 'Col', 'Major', 'Jonkheer', 'Capt', 'Sir', 'Don', 'Rev'], 'Dr/Military/Noble/Clergy')
@@ -89,5 +89,5 @@ for df in dfs:
 #df_all['Deck'].value_counts()
 df_all = concat_df(df_train, df_test)
 print(df_all.head())
-#print(df_all['Deck'].value_counts())
+print(df_all['Title'].value_counts())
 df_all.to_csv('data.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
