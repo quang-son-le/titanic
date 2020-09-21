@@ -26,16 +26,16 @@ def display_missing(df):
 # Code adapted from https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
 def simplify_ages(df):
     
-    bins = (-1, 0, 5, 12, 18, 25, 35, 60, 120)
-    group_names = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
-    categories = pd.cut(df.Age, bins, labels=group_names)
+    bins = ( 0, 5, 12, 18, 25, 35, 60, 120)
+  #  group_names = [ 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
+    categories = pd.cut(df.Age, bins )
     df.Age = categories
     return df
 def simplify_fares(df):
    
-    bins = (-1, 0, 8, 15, 31, 1000)
-    group_names = ['Unknown', '1_quartile', '2_quartile', '3_quartile', '4_quartile']
-    categories = pd.cut(df.Fare, bins, labels=group_names)
+    bins = (-0.1,0, 8, 15, 31, 1000)
+  #  group_names = [ 'free','1_quartile', '2_quartile', '3_quartile', '4_quartile']
+    categories = pd.cut(df.Fare, bins)
     df.Fare = categories
     return df
 df_train = pd.read_csv('train.csv')
@@ -82,12 +82,12 @@ dfs = [df_train, df_test]
 non_numeric_features = [ 'Age', 'Fare']
 
 for df in dfs:
-    for feature in non_numeric_features:        
+   for feature in non_numeric_features:        
         df[feature] = LabelEncoder().fit_transform(df[feature])
 #for df in dfs:
     #display_missing(df)
 #df_all['Deck'].value_counts()
 df_all = concat_df(df_train, df_test)
 print(df_all.head())
-print(df_all['Deck'].value_counts())
+#print(df_all['Deck'].value_counts())
 df_all.to_csv('data.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
