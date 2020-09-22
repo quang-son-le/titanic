@@ -26,16 +26,16 @@ def display_missing(df):
 # Code adapted from https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
 def simplify_ages(df):
     
-    bins = (-1, 0, 5, 12, 18, 25, 35, 60, 120)
-    group_names = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
-    categories = pd.cut(df.Age, bins, labels=group_names)
+    bins = ( 0,5, 12, 18, 25, 35, 60, 120)
+   # group_names = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
+    categories = pd.cut(df.Age, bins)
     df.Age = categories
     return df
 def simplify_fares(df):
    
-    bins = (-1, 0, 8, 15, 31, 1000)
-    group_names = ['Unknown', '1_quartile', '2_quartile', '3_quartile', '4_quartile']
-    categories = pd.cut(df.Fare, bins, labels=group_names)
+    bins = (-0.5, 0, 8, 15, 31, 1000)
+   # group_names = ['Unknown', '1_quartile', '2_quartile', '3_quartile', '4_quartile']
+    categories = pd.cut(df.Fare, bins)
     df.Fare = categories
     return df
 df_train = pd.read_csv('train.csv')
@@ -45,6 +45,10 @@ df_train.name = 'Training Set'
 df_test.name = 'Test Set'
 df_all.name = 'All Set'
 dfs = [df_train, df_test]
+#print('before')
+#print(df_all.index)
+#print(df_test.index)
+#print(df_train.index)
 # fill missing age
 age_by_pclass_sex = df_all.groupby(['Sex', 'Pclass']).median()['Age']
 # Filling the missing values in Age with the medians of Sex and Pclass groups
@@ -79,15 +83,27 @@ df_train = df_all.loc[:890]
 df_test = df_all.loc[891:]
 dfs = [df_train, df_test]
 #label encode
-non_numeric_features = [ 'Age', 'Fare']
+non_numeric_features = [ 'Age','Fare','Title']
 
-for df in dfs:
-    for feature in non_numeric_features:        
-        df[feature] = LabelEncoder().fit_transform(df[feature])
+for feature in non_numeric_features:        
+       df_all[feature] = LabelEncoder().fit_transform(df_all[feature])
+#one hot encoding
+encoded_feat = OneHotEncoder().fit_transform(df_all['Sex'].values.reshape(-1, 1)).toarray()
+n = df_all['Sex'].nunique()
+cols = ['{}_{}'.format('Sex', n) for n in range(1, n + 1)]
+encoded_df = pd.DataFrame(encoded_feat, columns=cols)
+encoded_df.index = df_all.index
+
+df_all = pd.concat([df_all, encoded_df], axis=1)        
 #for df in dfs:
     #display_missing(df)
 #df_all['Deck'].value_counts()
-df_all = concat_df(df_train, df_test)
+#df_all = concat_df(df_train, df_test)
 print(df_all.head())
-print(df_all['Deck'].value_counts())
+print(df_all['Title'].value_counts())
+#print('after')
+#print(df_all.index)
+#print(df_test.index)
+#print(df_train.index)
+#df_all.to_csv('data.csv', encoding='utf-8', index=False)
 df_all.to_csv('data.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)

@@ -17,10 +17,10 @@ model.add(Embedding(input_dim = 4, output_dim = embedding_size, input_length = 1
 model.add(Flatten())
 model.add(Dense(50, activation="relu"))
 model.add(Dense(15, activation="sigmoid"))
-model.add(Dense(1))
+model.add(Dense(5))
 model.compile(loss = "mse", optimizer = "adam", metrics=["accuracy"])
 print(model.summary())
-model.fit(x = df_all[['code']].to_numpy(), y=df_all[['Fare']].to_numpy() , epochs = 50, batch_size = 4,verbose=0)
+model.fit(x = df_all[['Title']].to_numpy(), y=df_all[['Pclass','Sex_1','Sex_2','Age','Fare']].to_numpy() , epochs = 50, batch_size = 4,verbose=0)
 print('result')
 layer_name = 'embedding'
 intermediate_layer_model = Model(inputs=model.input,
