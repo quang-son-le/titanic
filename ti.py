@@ -26,15 +26,26 @@ def display_missing(df):
 # Code adapted from https://www.kaggle.com/jeffd23/scikit-learn-ml-from-start-to-finish
 def simplify_ages(df):
     
+
     bins = ( 0,5, 12, 18, 25, 35, 60, 120)
    # group_names = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
     categories = pd.cut(df.Age, bins)
+
+    bins = ( 0, 5, 12, 18, 25, 35, 60, 120)
+  #  group_names = [ 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
+    categories = pd.cut(df.Age, bins )
+
     df.Age = categories
     return df
 def simplify_fares(df):
    
+
     bins = (-0.5, 0, 8, 15, 31, 1000)
    # group_names = ['Unknown', '1_quartile', '2_quartile', '3_quartile', '4_quartile']
+
+    bins = (-0.1,0, 8, 15, 31, 1000)
+  #  group_names = [ 'free','1_quartile', '2_quartile', '3_quartile', '4_quartile']
+
     categories = pd.cut(df.Fare, bins)
     df.Fare = categories
     return df
@@ -70,8 +81,8 @@ df_all=simplify_ages(df_all)
 df_all=simplify_fares(df_all)
 df_all['Ticket_Frequency'] = df_all.groupby('Ticket')['Ticket'].transform('count')
 df_all['Title'] = df_all['Name'].str.split(', ', expand=True)[1].str.split('.', expand=True)[0]
-df_all['Is_Married'] = 0
-df_all['Is_Married'].loc[df_all['Title'] == 'Mrs'] = 1
+#df_all['Is_Married'] = 0
+#df_all['Is_Married'].loc[df_all['Title'] == 'Mrs'] = 1
 # group them
 df_all['Title'] = df_all['Title'].replace(['Miss', 'Mrs','Ms', 'Mlle', 'Lady', 'Mme', 'the Countess', 'Dona'], 'Miss/Mrs/Ms')
 df_all['Title'] = df_all['Title'].replace(['Dr', 'Col', 'Major', 'Jonkheer', 'Capt', 'Sir', 'Don', 'Rev'], 'Dr/Military/Noble/Clergy')
@@ -95,12 +106,18 @@ encoded_df = pd.DataFrame(encoded_feat, columns=cols)
 encoded_df.index = df_all.index
 
 df_all = pd.concat([df_all, encoded_df], axis=1)        
+
+for df in dfs:
+   for feature in non_numeric_features:        
+        df[feature] = LabelEncoder().fit_transform(df[feature])
+
 #for df in dfs:
     #display_missing(df)
 #df_all['Deck'].value_counts()
 #df_all = concat_df(df_train, df_test)
 print(df_all.head())
 print(df_all['Title'].value_counts())
+
 #print('after')
 #print(df_all.index)
 #print(df_test.index)
