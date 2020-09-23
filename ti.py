@@ -103,7 +103,7 @@ encoded_feat = OneHotEncoder().fit_transform(df_all['Sex'].values.reshape(-1, 1)
 n = df_all['Sex'].nunique()
 cols = ['{}_{}'.format('Sex', n) for n in range(1, n + 1)]
 encoded_df = pd.DataFrame(encoded_feat, columns=cols)
-encoded_df.index = df_all.index
+#encoded_df.index = df_all.index
 
 df_all = pd.concat([df_all, encoded_df], axis=1)        
 
@@ -123,4 +123,4 @@ print(df_all['Title'].value_counts())
 #print(df_test.index)
 #print(df_train.index)
 #df_all.to_csv('data.csv', encoding='utf-8', index=False)
-df_all.to_csv('data.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
+df_all.to_csv('data1.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
