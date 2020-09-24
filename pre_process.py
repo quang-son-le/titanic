@@ -52,6 +52,7 @@ def simplify_fares(df):
 df_train = pd.read_csv('train.csv')
 df_test = pd.read_csv('test.csv')
 df_all = concat_df(df_train, df_test)
+df_all['Survived'] = df_all['Survived'].fillna(1) # temporarily fill survivived in test , will be dropped later
 df_train.name = 'Training Set'
 df_test.name = 'Test Set'
 df_all.name = 'All Set'
@@ -76,7 +77,7 @@ df_all['Deck'] = df_all['Deck'].replace(['A', 'B', 'C'], 'ABC')
 df_all['Deck'] = df_all['Deck'].replace(['D', 'E'], 'DE')
 df_all['Deck'] = df_all['Deck'].replace(['F', 'G'], 'FG')
 #############################################################new features based on relationship
-df_all['Family_Size'] = df_all['SibSp'] + df_all['Parch'] + 1
+#df_all['Family_Size'] = df_all['SibSp'] + df_all['Parch'] + 1
 df_all=simplify_ages(df_all)
 df_all=simplify_fares(df_all)
 df_all['Ticket_Frequency'] = df_all.groupby('Ticket')['Ticket'].transform('count')
@@ -88,39 +89,51 @@ df_all['Title'] = df_all['Title'].replace(['Miss', 'Mrs','Ms', 'Mlle', 'Lady', '
 df_all['Title'] = df_all['Title'].replace(['Dr', 'Col', 'Major', 'Jonkheer', 'Capt', 'Sir', 'Don', 'Rev'], 'Dr/Military/Noble/Clergy')
 
 #drop
-df_all=drop_features(df_all)
 
-df_train = df_all.loc[:890]
-df_test = df_all.loc[891:]
-dfs = [df_train, df_test]
+
+
+
 #label encode
-non_numeric_features = [ 'Age','Fare','Title']
+non_numeric_features = [ 'Age','Fare','Title','Deck']
 
 for feature in non_numeric_features:        
        df_all[feature] = LabelEncoder().fit_transform(df_all[feature])
-#one hot encoding
-encoded_feat = OneHotEncoder().fit_transform(df_all['Sex'].values.reshape(-1, 1)).toarray()
-n = df_all['Sex'].nunique()
-cols = ['{}_{}'.format('Sex', n) for n in range(1, n + 1)]
-encoded_df = pd.DataFrame(encoded_feat, columns=cols)
+
 #encoded_df.index = df_all.index
 
-df_all = pd.concat([df_all, encoded_df], axis=1)        
+  
 
-for df in dfs:
-   for feature in non_numeric_features:        
-        df[feature] = LabelEncoder().fit_transform(df[feature])
+
 
 #for df in dfs:
     #display_missing(df)
 #df_all['Deck'].value_counts()
 #df_all = concat_df(df_train, df_test)
+
+
+#dfs = [df_train, df_test]
+
 print(df_all.head())
 print(df_all['Title'].value_counts())
+#one hot encoding
+cat_features = ['Sex', 'Survived']
+encoded_features = []
 
-#print('after')
+for feature in cat_features:
+        encoded_feat = OneHotEncoder().fit_transform(df_all[feature].values.reshape(-1, 1)).toarray()
+        n = df_all[feature].nunique()
+        cols = ['{}_{}'.format(feature, n) for n in range(1, n + 1)]
+        encoded_df = pd.DataFrame(encoded_feat, columns=cols)
+        encoded_df.index = df_all.index
+        encoded_features.append(encoded_df)
+
+df_all = pd.concat([df_all, *encoded_features], axis=1)
+
+
 #print(df_all.index)
 #print(df_test.index)
 #print(df_train.index)
 #df_all.to_csv('data.csv', encoding='utf-8', index=False)
+df_all=drop_features(df_all)
 df_all.to_csv('data1.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
+#df_test.to_csv('data_test.csv', encoding='utf-8', index=False, quoting=csv.QUOTE_NONE)
