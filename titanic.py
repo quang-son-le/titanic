@@ -10,8 +10,7 @@ import keras
 sys.stderr=stderr
 import pandas as pd
 import csv
-from keras.models import Sequential
-from keras.layers import Dense
+
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
 from sklearn.model_selection import cross_val_score
@@ -94,7 +93,7 @@ def test_clfs(clf,name):
     predictions = clf.predict(df_test)
     
     #predictions=predictions.reshape(-1,1)
-    data = [passengerid["PassengerId"], pd.DataFrame({'Survived':predictions})]
+    data = [passengerid["PassengerId"].astype(np.int), pd.DataFrame({'Survived':predictions.astype(np.int)})]
     #headers = ["PassengerId", "Survivied"]
     print(passengerid.shape)
     print(predictions.shape)

@@ -24,7 +24,7 @@ model.add(Dense(15, activation="sigmoid"))
 model.add(Dense(5))
 model.compile(loss = "mse", optimizer = "adam", metrics=["accuracy"])
 print(model.summary())
-model.fit(x = df_all[['Title']].to_numpy(), y=df_all[['Pclass','Sex_1','Sex_2','Age','Fare']].to_numpy() , epochs = 50, batch_size = 4,verbose=0)
+model.fit(x = df_all[['Title']].to_numpy(), y=df_all[['Pclass','Sex_1','Sex_2','Age','Fare']].to_numpy() , epochs = 60, batch_size = 4,verbose=0)
 model.save('title_model')
 model = keras.models.load_model('title_model')
 
