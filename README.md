@@ -15,3 +15,7 @@ other classifiers (run with data.csv) is adopted from
 https://github.com/gtraskas/titanic_prediction/blob/master/titanic_prediction.ipynb?fbclid=IwAR1zd1Y0LsKFM68ir724Kkv2nkiRoRwDwkVf8IwIaO-5PM65pl4HjloXsHk
 
 to compare
+
+score is about 0.77. Tuning network and apply Pca (will throw away some features of deep encoding) wont improve much socre
+
+any feedback is welcomed, email: officialquangsonle@gmail.com
