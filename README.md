@@ -1,4 +1,4 @@
-neural networkk and deep embedded encoding to solve titanic survival prediction on kaggle
+neural network and deep embedded encoding to solve titanic survival prediction on kaggle
 
 data pre processing (pre_procees.py) is adopted from 
 https://www.kaggle.com/gunesevitan/titanic-advanced-feature-engineering-tutorial?fbclid=IwAR0TgrZslgDKmHP5n7yQyzmArNhOuOSJcrgUADrccfk-lJkdqbwRvCMlpwo
