@@ -1,23 +1,17 @@
-neural network and deep embedded encoding to solve titanic survival prediction on kaggle
+#neural network and deep embedded encoding to solve titanic survival prediction on Kaggle
 
-data pre processing (pre_procees.py) is adopted from 
-https://www.kaggle.com/gunesevitan/titanic-advanced-feature-engineering-tutorial?fbclid=IwAR0TgrZslgDKmHP5n7yQyzmArNhOuOSJcrgUADrccfk-lJkdqbwRvCMlpwo
+The data preprocessing (pre_process.py) is adapted from a [Kaggle tutorial]([https://www.kaggle.com/gunesevitan/titanic-advanced-feature-engineering-tutorial?fbclid=IwAR0TgrZslgDKmHP5n7yQyzmArNhOuOSJcrgUADrccfk-lJkdqbwRvCMlpwo]) on advanced feature engineering for the Titanic dataset. To execute pre_process.py and create data1.csv, note that there are three nominal data groups: Deck, Title, and Sex. Since Sex is intuitively unrelated to the others, only Deck and Title are encoded. Sex is one-hot encoded.
 
-in order to run pre_process.py to create data1.csv
+Execute Title_encoding.py to get data2.csv.
 
-there are 3 nomimal data groups here are Deck, Title and Sex. Because Sex intuitively doesn't have any relationship with any others, so only 2 are encoded. Sex is one hot encodded
+Execute Deck_encoding.py to get data.csv.
 
-Run Title_encoding.py, get data2.csv
+Execute keras_t.py to predict, output is network_keras.csv
 
-Run Deck_encoding.py get data.csv
+other classifiers (run with data.csv) are adopted from  [Kaggle tutorial]([https://github.com/gtraskas/titanic_prediction/blob/master/titanic_prediction.ipynb?fbclid=IwAR1zd1Y0LsKFM68ir724Kkv2nkiRoRwDwkVf8IwIaO-5PM65pl4HjloXsHk])
 
-Run keras_t.py to predict, output is network_keras.csv
+to compare:
 
-other classifiers (run with data.csv) is adopted from 
-https://github.com/gtraskas/titanic_prediction/blob/master/titanic_prediction.ipynb?fbclid=IwAR1zd1Y0LsKFM68ir724Kkv2nkiRoRwDwkVf8IwIaO-5PM65pl4HjloXsHk
-
-to compare
-
-score is about 0.77. Tuning network and apply Pca (will throw away some features of deep encoding) wont improve much socre
+the score is about 0.77. Tuning the network and applying Pca (which will throw away some features of deep encoding) won't improve the score
 
 any feedback is welcomed, email: officialquangsonle@gmail.com
